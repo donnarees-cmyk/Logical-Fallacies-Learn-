@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logical Fallacy Detectives</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff7ec; --ink:#2b2340; --muted:#6b6280; --card:#ffffff;
+  --orange:#f97316; --red:#ef4444; --purple:#8b5cf6; --teal:#14b8a6; --blue:#3b82f6; --yellow:#facc15; --green:#22c55e; --pink:#ec4899;
+  --good:#16a34a; --bad:#dc2626;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Nunito",Arial,sans-serif;color:var(--ink);background:var(--bg);
+  background-image:radial-gradient(circle at 10% 10%,#ffe4c7 0,transparent 30%),radial-gradient(circle at 90% 20%,#ede4ff 0,transparent 30%),radial-gradient(circle at 50% 100%,#d9fbf4 0,transparent 35%);
+  min-height:100vh;font-size:18px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+header{background:linear-gradient(120deg,#7c3aed,#ec4899 55%,#f97316);color:#fff;border-radius:24px;padding:20px 22px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(124,58,237,.25)}
+header h1{font-family:"Fredoka",sans-serif;font-size:clamp(28px,5vw,44px);margin:4px 0}
+header p{margin:4px 0;font-size:17px}
+.std{display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:800;margin-top:6px}
+.logo{position:absolute;right:16px;top:12px;height:88px;background:#fff;border-radius:14px;padding:4px}
+.mag{position:absolute;right:20px;bottom:-14px;font-size:84px;opacity:.25}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+nav button{flex:1 1 140px;border:none;border-radius:16px;padding:12px 10px;font-family:"Fredoka";font-size:17px;cursor:pointer;background:#fff;color:var(--ink);box-shadow:0 3px 0 #e2d8f3;font-weight:600}
+nav button.on{background:var(--purple);color:#fff;box-shadow:0 3px 0 #5b21b6}
+nav button .ck{margin-left:4px}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border-radius:22px;padding:18px 20px;margin-bottom:16px;box-shadow:0 4px 16px rgba(43,35,64,.08);border:3px solid #f1e8ff}
+h2{font-family:"Fredoka";font-size:30px;margin:4px 0 8px}
+h3{font-family:"Fredoka";font-size:24px;margin:2px 0 6px}
+.dir{background:#fff3c4;border:3px dashed #facc15;border-radius:18px;padding:12px 16px;margin-bottom:16px}
+.dir ol{margin:4px 0;padding-left:24px}
+.say{border:none;background:#eef2ff;color:#3730a3;border-radius:999px;padding:6px 14px;font-weight:800;font-size:15px;cursor:pointer;margin:4px 0}
+.say:active{transform:scale(.97)}
+.fgrid{display:grid;grid-template-columns:1fr;gap:16px}
+.fcard{border-radius:22px;padding:18px 20px;background:#fff;border:4px solid;position:relative}
+.fhead{display:flex;align-items:center;gap:12px}
+.femoji{font-size:44px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:18px}
+.fname{font-family:"Fredoka";font-size:26px;line-height:1.1}
+.fkid{font-weight:800;color:var(--muted);font-size:16px}
+.box{border-radius:14px;padding:10px 14px;margin:8px 0}
+.lbl{font-weight:800}
+.q{margin-top:10px;background:#faf7ff;border-radius:16px;padding:12px 14px}
+.qtext{font-weight:700}
+.opts{display:grid;gap:8px;margin-top:8px}
+.opt{text-align:left;border:3px solid #ddd3f0;background:#fff;border-radius:14px;padding:10px 14px;font-size:17px;font-family:"Nunito";font-weight:700;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--purple)}
+.opt:disabled{cursor:default}
+.opt.right{background:#dcfce7;border-color:var(--good)}
+.opt.wrong{background:#fee2e2;border-color:var(--bad)}
+.opt.show{border-color:var(--good);border-style:dashed}
+.fb{margin-top:8px;border-radius:12px;padding:8px 12px;font-weight:700;display:none}
+.fb.good{display:block;background:#dcfce7;color:#14532d}
+.fb.bad{display:block;background:#fee2e2;color:#7f1d1d}
+.scene{border-radius:18px;padding:14px 16px;margin:6px 0 4px;font-size:18px}
+.scene .src{font-weight:800;font-size:14px;letter-spacing:.5px;text-transform:uppercase;opacity:.8}
+.ad{background:linear-gradient(135deg,#fff1f2,#ffe4e6);border:3px solid #fda4af}
+.post{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:3px solid #93c5fd}
+.talk{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:3px solid #86efac}
+.text{background:linear-gradient(135deg,#faf5ff,#f3e8ff);border:3px solid #d8b4fe}
+.score{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}
+.pill{background:#fff;border-radius:999px;padding:6px 14px;font-weight:800;border:3px solid #ede4ff}
+.gamebig{text-align:center}
+.gstate{font-family:"Fredoka";font-size:22px}
+.gstmt{font-size:22px;font-weight:800;background:#fff;border:4px solid var(--teal);border-radius:20px;padding:22px;margin:12px 0}
+.gbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.gbtn{border:none;border-radius:18px;padding:16px 22px;font-family:"Fredoka";font-size:22px;color:#fff;cursor:pointer;min-width:200px}
+.gbtn.s{background:var(--green);box-shadow:0 4px 0 #15803d}
+.gbtn.f{background:var(--red);box-shadow:0 4px 0 #b91c1c}
+.gbtn:disabled{opacity:.5;cursor:default}
+.passage{background:#fffdf5;border:3px solid #fde68a;border-radius:18px;padding:14px 18px}
+.passage p{margin:8px 0}
+.pn{display:inline-block;background:#f59e0b;color:#fff;border-radius:50%;width:28px;height:28px;text-align:center;font-weight:800;line-height:28px;margin-right:6px;font-size:15px}
+.next{display:block;margin:10px auto 0;border:none;background:var(--orange);color:#fff;font-family:"Fredoka";font-size:22px;border-radius:18px;padding:12px 28px;cursor:pointer;box-shadow:0 4px 0 #c2410c}
+.btn2{border:none;background:var(--purple);color:#fff;font-family:"Fredoka";font-size:18px;border-radius:14px;padding:10px 18px;cursor:pointer}
+input[type=text]{font-size:20px;padding:10px 14px;border-radius:14px;border:3px solid #ddd3f0;width:100%;max-width:360px;font-family:"Nunito";font-weight:700}
+.cheatbtn{position:fixed;right:14px;bottom:14px;z-index:20;border:none;background:var(--teal);color:#fff;font-family:"Fredoka";font-size:18px;border-radius:999px;padding:12px 18px;box-shadow:0 6px 16px rgba(20,184,166,.4);cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:rgba(43,35,64,.55);z-index:30;padding:16px;overflow:auto}
+.modal.on{display:block}
+.mbox{background:#fff;max-width:900px;margin:20px auto;border-radius:22px;padding:18px 20px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.cg{border-radius:16px;padding:10px 12px;border:3px solid}
+.res{text-align:center}
+.big{font-family:"Fredoka";font-size:56px;margin:4px 0}
+.badge{font-size:70px}
+table.rt{width:100%;border-collapse:collapse;margin-top:10px}
+table.rt td{padding:8px;border-bottom:2px solid #f1e8ff;text-align:left}
+.saved{font-size:14px;color:var(--muted);text-align:center;margin-top:6px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+@media (min-width:760px){.fgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+<header>
+  <img class="logo" src="logo.png" alt="Literacy Locksmith logo" onerror="this.style.display='none'">
+  <div style="font-weight:800;letter-spacing:2px;font-size:14px">6TH GRADE ELA</div>
+  <h1>🔍 Logical Fallacy Detectives</h1>
+  <p>Learn to spot sneaky, broken reasoning in ads, posts, and arguments!</p>
+  <span class="std" data-nosay>Florida B.E.S.T. ELA.6.R.2.4: Track the development of an argument, identifying the types of reasoning used.</span>
+  <div class="mag">🕵️</div>
+</header>
+
+<nav id="nav">
+  <button data-p="start">🚀 Start</button>
+  <button data-p="learn">📚 1. Learn</button>
+  <button data-p="detect">🕵️ 2. Detective</button>
+  <button data-p="game">⚡ 3. Strong or Sneaky?</button>
+  <button data-p="final">📝 4. Final Check</button>
+  <button data-p="results">🏆 Results</button>
+</nav>
+
+<!-- START -->
+<section class="panel" id="p-start">
+  <div class="dir">
+    <b>📱 iPad Directions:</b>
+    <ol>
+      <li>✍️ Type your <b>first name and last initial</b> below.</li>
+      <li>🔊 Tap <b>Read to Me</b> any time to hear the words.</li>
+      <li>👆 Go in order: <b>Learn → Detective → Strong or Sneaky? → Final Check</b>.</li>
+      <li>⚠️ You get <b>ONE try</b> on each question, so read carefully!</li>
+      <li>💾 Your work <b>saves automatically</b> on your iPad. You can leave and come back.</li>
+      <li>📸 At the end, take a <b>screenshot</b> of your Results and upload it to the Canvas module.</li>
+    </ol>
+  </div>
+  <div class="dir" style="background:#e0f2fe;border-color:#38bdf8">
+    <b>🙋 Working on your own today!</b> If you get stuck, try these steps <b>before</b> asking anyone:
+    <ol>
+      <li>🔊 Tap <b>Read to Me</b> and listen again.</li>
+      <li>📋 Open the <b>Cheat Sheet</b> (bottom corner) and compare the clue words.</li>
+      <li>📚 Go back to the <b>Learn</b> cards and reread the example.</li>
+      <li>🤔 Still stuck? Pick your best answer. Every answer shows you <b>why</b>, so you learn either way!</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>What is a logical fallacy? 🤔</h2>
+    <button class="say" data-say="#intro">🔊 Read to Me</button>
+    <div id="intro">
+      <p>When people try to convince you of something, they make an <b>argument</b>. An argument has a <b>claim</b> (what they want you to believe) and <b>reasons</b> (why you should believe it).</p>
+      <p>A <b>logical fallacy</b> is a mistake in reasoning. It's a reason that <i>sounds</i> convincing, but it doesn't really prove the claim. Advertisers, social media posts, and even friends use fallacies all the time!</p>
+      <p>Your job: become a <b>Fallacy Detective</b> and catch the sneaky reasoning. 🕵️</p>
+    </div>
+    <p style="margin-top:14px"><b>Your name:</b><br><input type="text" id="name" placeholder="First name + last initial" autocomplete="off"></p>
+    <button class="next" data-go="learn">Let's Go! ➜</button>
+  </div>
+</section>
+
+<!-- LEARN -->
+<section class="panel" id="p-learn">
+  <div class="dir">📚 <b>Learn the 8 fallacies.</b> Read each card (or tap 🔊), then answer its <b>Quick Check</b>. Need a reminder later? Tap the <b>📋 Cheat Sheet</b> button in the corner!</div>
+  <div class="fgrid" id="learnGrid"></div>
+  <button class="next" data-go="detect">On to Detective! ➜</button>
+</section>
+
+<!-- DETECT -->
+<section class="panel" id="p-detect">
+  <div class="dir">🕵️ <b>Fallacy Detective:</b> Read each ad, post, or conversation. Which fallacy is hiding in it? One try each!</div>
+  <div class="score"><span class="pill" id="detScore">Score: 0 / 10</span></div>
+  <div id="detList"></div>
+  <button class="next" data-go="game">On to Strong or Sneaky? ➜</button>
+</section>
+
+<!-- GAME -->
+<section class="panel" id="p-game">
+  <div class="dir">⚡ <b>Strong or Sneaky?</b> Is the reasoning <b>STRONG</b> (good evidence and logic) or <b>SNEAKY</b> (a fallacy)? Build a streak! 🔥</div>
+  <div class="card gamebig" id="gameBox"></div>
+</section>
+
+<!-- FINAL -->
+<section class="panel" id="p-final">
+  <div class="dir">📝 <b>Final Check (FAST-style):</b> Read the student's argument, then answer the questions. You may look back at the passage. One try each!</div>
+  <div class="card">
+    <h3>Should Our School Have a Four-Day Week?</h3>
+    <button class="say" data-say="#passage">🔊 Read to Me</button>
+    <div class="passage" id="passage">
+      <p><span class="pn">1</span>Our school should switch to a four-day school week. Students would have more time to rest and spend time with their families. In a survey of 300 families in our district, 210 said they would support a four-day week.</p>
+      <p><span class="pn">2</span>Some people say a four-day week would be too hard for working parents. But the people who say this just don't care about students at all.</p>
+      <p><span class="pn">3</span>Also, my friend's school switched to a four-day week last year, and her grades went up. This proves that a four-day week makes every student smarter.</p>
+      <p><span class="pn">4</span>We only have two choices: switch to a four-day week, or watch every student burn out completely. The choice is clear.</p>
+    </div>
+  </div>
+  <div class="score"><span class="pill" id="finScore">Answered: 0 / 8</span></div>
+  <div id="finList"></div>
+  <button class="next" data-go="results">See My Results! 🏆</button>
+</section>
+
+<!-- RESULTS -->
+<section class="panel" id="p-results">
+  <div class="card res" id="resBox"></div>
+</section>
+
+<p class="saved">💾 Your answers save automatically on this iPad.</p>
+</div>
+
+<button class="cheatbtn" id="cheatBtn">📋 Cheat Sheet</button>
+<div class="modal" id="cheat"><div class="mbox">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <h2 style="margin:0">📋 Fallacy Cheat Sheet</h2>
+    <button class="btn2" id="cheatClose">✖ Close</button>
+  </div>
+  <div class="cgrid" id="cheatGrid" style="margin-top:10px"></div>
+</div></div>
+
+<script>
+/* ---------- DATA ---------- */
+const F = [
+ {id:"band", name:"Bandwagon", emoji:"🚌", kid:"\"Everyone's doing it!\"", color:"#f97316", bg:"#fff1e6",
+  def:"Says something is right or good just because lots of people do it or believe it.",
+  clue:"everyone, all your friends, most people, don't get left out",
+  ex:"\"Every kid in sixth grade has the new Zoom-Pro sneakers. You need a pair too!\"",
+  why:"Lots of people liking something doesn't prove it is good, true, or right for you.",
+  check:{q:"\"Millions of people watch this show, so it must be the best show ever.\" Which fallacy is this?", a:"Bandwagon", o:["Bandwagon","Straw Man","Slippery Slope"]}},
+ {id:"adh", name:"Ad Hominem", emoji:"🎯", kid:"Attacking the person", color:"#ef4444", bg:"#fff0f0",
+  def:"Attacks the person making the argument instead of the argument itself.",
+  clue:"insults, name-calling, bringing up something unrelated about the person",
+  ex:"\"Don't listen to Maya's idea for a longer recess. She can't even keep her locker clean.\"",
+  why:"A messy locker has nothing to do with whether Maya's recess idea is a good one.",
+  check:{q:"\"Why should we believe Coach about healthy eating? He's bad at video games.\" Which fallacy is this?", a:"Ad Hominem", o:["Hasty Generalization","Ad Hominem","Either/Or"]}},
+ {id:"hasty", name:"Hasty Generalization", emoji:"🏃", kid:"Jumping to conclusions", color:"#eab308", bg:"#fffbe6",
+  def:"Makes a big conclusion about everything or everyone based on only one or two examples.",
+  clue:"all, every, always, never, nobody (from just a few examples)",
+  ex:"\"I had two bad slices of pizza at that restaurant, so all of their food is terrible.\"",
+  why:"Two slices of pizza are not enough evidence to judge everything on the menu.",
+  check:{q:"\"My neighbor's dog bit someone, so all dogs are dangerous.\" Which fallacy is this?", a:"Hasty Generalization", o:["Faulty Appeal to Authority","Bandwagon","Hasty Generalization"]}},
+ {id:"cause", name:"False Cause", emoji:"🔗", kid:"\"That happened first, so it caused this!\"", color:"#22c55e", bg:"#effdf3",
+  def:"Claims that because one thing happened before another, the first thing caused the second.",
+  clue:"ever since, after that, because of (with no real proof)",
+  ex:"\"I wore my lucky socks and we won the game. My socks made us win!\"",
+  why:"Happening at the same time doesn't mean one thing caused the other. The team's practice won the game!",
+  check:{q:"\"I ate a banana before the test and got an A. Bananas make you smart!\" Which fallacy is this?", a:"False Cause", o:["False Cause","Ad Hominem","Straw Man"]}},
+ {id:"either", name:"Either/Or", emoji:"⚖️", kid:"Only two choices", color:"#3b82f6", bg:"#eef5ff",
+  def:"Pretends there are only two choices when there are really many more.",
+  clue:"either...or, there are only two options, if you don't..., you must...",
+  ex:"\"Either we ban phones in school, or no one will ever learn anything.\"",
+  why:"There are lots of other choices, like phone rules or phone lockers during class.",
+  check:{q:"\"You either love soccer, or you hate sports.\" Which fallacy is this?", a:"Either/Or", o:["Slippery Slope","Either/Or","Bandwagon"]}},
+ {id:"slope", name:"Slippery Slope", emoji:"🛝", kid:"One step leads to disaster", color:"#8b5cf6", bg:"#f5f0ff",
+  def:"Claims that one small step will lead to a chain of events ending in disaster, without proof.",
+  clue:"if we..., then soon..., next thing you know..., this will lead to...",
+  ex:"\"If we let students chew gum in class, soon they'll eat full meals, and the classroom will be covered in trash!\"",
+  why:"There's no proof that chewing gum would lead to all those other things happening.",
+  check:{q:"\"If you skip one chore, you'll skip them all, and the whole house will fall apart!\" Which fallacy is this?", a:"Slippery Slope", o:["False Cause","Hasty Generalization","Slippery Slope"]}},
+ {id:"straw", name:"Straw Man", emoji:"🌾", kid:"Twisting someone's words", color:"#ec4899", bg:"#fff0f7",
+  def:"Changes or exaggerates someone's argument to make it easier to attack.",
+  clue:"\"So you're saying...\", making the other side sound extreme",
+  ex:"Sam: \"We should have less homework on weekends.\" Jordan: \"Sam wants NO homework ever, so we'd never learn anything!\"",
+  why:"Sam never said \"no homework ever.\" Jordan twisted Sam's idea to make it look silly.",
+  check:{q:"Ava: \"Let's have more vegetables at lunch.\" Leo: \"Ava wants to take away all of our favorite food!\" Which fallacy does Leo use?", a:"Straw Man", o:["Straw Man","Either/Or","Faulty Appeal to Authority"]}},
+ {id:"auth", name:"Faulty Appeal to Authority", emoji:"🌟", kid:"The wrong expert", color:"#14b8a6", bg:"#ecfdfa",
+  def:"Uses a famous or popular person as proof, even though they are not an expert on the topic.",
+  clue:"a celebrity, athlete, or influencer talking about something outside their skill",
+  ex:"\"Basketball star Jay Rivers says this toothpaste is best for your teeth, so it must be true.\"",
+  why:"Jay Rivers is an expert at basketball, not teeth. A dentist would be a real expert.",
+  check:{q:"\"A famous singer says this cereal is the healthiest, so it must be.\" Which fallacy is this?", a:"Faulty Appeal to Authority", o:["Bandwagon","Faulty Appeal to Authority","Ad Hominem"]}}
+];
+const NAMES = F.map(f=>f.name);
+
+const DET = [
+ {t:"ad", src:"📺 Ad", s:"9 out of 10 kids in town already play Galaxy Dash. Download it today so you don't get left out!", a:"Bandwagon", why:"It says to download the game because everyone else has it."},
+ {t:"post", src:"📱 Social Media Post", s:"Our team lost the last two games after Coach changed the warm-up. The new warm-up is making us lose!", a:"False Cause", why:"Losing after the change doesn't prove the warm-up caused the losses."},
+ {t:"talk", src:"💬 Class Debate", s:"Lena says the cafeteria should add more fruit. But Lena is always late to class, so her idea doesn't count.", a:"Ad Hominem", why:"It attacks Lena (being late) instead of her idea about fruit."},
+ {t:"text", src:"✉️ Text Message", s:"My cousin and her friend didn't like the new library. Nobody in our town is going to like it.", a:"Hasty Generalization", why:"Two people's opinions are used to judge the whole town."},
+ {t:"talk", src:"🎤 Student Council Speech", s:"You either vote for me, or you hate having fun at school.", a:"Either/Or", why:"There are more choices than just those two."},
+ {t:"text", src:"🏠 At Home", s:"If I let you stay up 15 minutes later tonight, next you'll want to stay up all night, and then you'll fail all of your classes!", a:"Slippery Slope", why:"One small step is said to lead to a disaster, with no proof."},
+ {t:"ad", src:"📺 Ad", s:"Pop singer Kayla Stone says SuperSmart vitamins make you smarter. Buy them now!", a:"Faulty Appeal to Authority", why:"A singer is not an expert on vitamins or the brain."},
+ {t:"talk", src:"💬 Town Meeting", s:"Ms. Diaz: \"We should plant more trees around the school.\" Mr. Hill: \"Ms. Diaz wants to turn our parking lot into a jungle where no one can park!\"", a:"Straw Man", why:"Mr. Hill exaggerates Ms. Diaz's idea to make it easier to attack."},
+ {t:"post", src:"📱 Social Media Post", s:"Everyone at my lunch table thinks the new rule is unfair, so it must be unfair.", a:"Bandwagon", why:"Many people agreeing doesn't make it true."},
+ {t:"post", src:"⭐ Book Review", s:"I read one book by this author and it was boring. All of her books must be boring.", a:"Hasty Generalization", why:"One book isn't enough to judge all of her books."}
+];
+
+const GAME = [
+ {s:"A survey of 400 students showed most want a longer lunch, so the student council should discuss it.", a:"strong", why:"It uses evidence from lots of students."},
+ {s:"Everyone is buying the new phone, so it must be the best phone.", a:"sneaky", why:"Bandwagon! Popular doesn't mean best."},
+ {s:"The dentist says to brush twice a day because brushing removes plaque that causes cavities.", a:"strong", why:"A real expert explains the reason."},
+ {s:"If we skip one practice, the whole season will be ruined.", a:"sneaky", why:"Slippery slope! One practice won't ruin everything."},
+ {s:"Scientists studied the river for five years and found the pollution came from a nearby factory.", a:"strong", why:"Years of careful study is strong evidence."},
+ {s:"You're either on our team, or you're against us.", a:"sneaky", why:"Either/Or! There are other choices."},
+ {s:"Our class reading log shows students who read 20 minutes a day raised their reading scores.", a:"strong", why:"It uses data to support the claim."},
+ {s:"I saw one rude seventh grader, so all seventh graders are rude.", a:"sneaky", why:"Hasty generalization! One person isn't everyone."}
+];
+
+const FIN = [
+ {q:"Which fallacy does the author use in paragraph 2?", o:["Ad Hominem","Bandwagon","Slippery Slope","False Cause"], a:"Ad Hominem", why:"The author attacks the people who disagree (\"they don't care about students\") instead of answering their concern."},
+ {q:"Why is the reasoning in paragraph 3 weak?", o:["It uses a celebrity who is not an expert.","It uses one example to make a claim about every student.","It says only two choices exist.","It twists someone else's argument."], a:"It uses one example to make a claim about every student.", why:"One friend's grades can't prove a four-day week makes every student smarter. That's a hasty generalization."},
+ {q:"Which fallacy does the author use in paragraph 4?", o:["Straw Man","Faulty Appeal to Authority","Either/Or","Hasty Generalization"], a:"Either/Or", why:"The author pretends there are only two choices, when there are many others."},
+ {q:"Which sentence gives the STRONGEST support for the author's claim?", o:["\"The choice is clear.\"","\"In a survey of 300 families in our district, 210 said they would support a four-day week.\"","\"Her grades went up.\"","\"The people who say this just don't care about students at all.\""], a:"\"In a survey of 300 families in our district, 210 said they would support a four-day week.\"", why:"It uses real evidence from many families."},
+ {q:"How could the author BEST fix paragraph 2?", o:["Call the other side an even stronger name.","Explain how working parents could be helped, such as with a day camp on the fifth day.","Say that everyone agrees with the four-day week.","Delete the survey from paragraph 1."], a:"Explain how working parents could be helped, such as with a day camp on the fifth day.", why:"A strong argument answers the concern with facts or solutions instead of attacking people."},
+ {q:"\"Since the new principal arrived, it has rained every Monday. The principal brought the rain!\" Which fallacy is this?", o:["Either/Or","False Cause","Bandwagon","Straw Man"], a:"False Cause", why:"Rain after the principal arrived doesn't mean the principal caused it."},
+ {q:"Which of these is an example of a STRAW MAN?", o:["\"All my friends have this game, so you should get it.\"","Kai: \"Maybe we could have one movie day a month.\" Rita: \"Kai wants to watch movies instead of ever doing schoolwork!\"","\"A famous actor says this phone is the safest.\"","\"If you miss the bus once, you'll be late forever.\""], a:"Kai: \"Maybe we could have one movie day a month.\" Rita: \"Kai wants to watch movies instead of ever doing schoolwork!\"", why:"Rita exaggerates Kai's idea to make it easy to attack."},
+ {q:"Why is a faulty appeal to authority a weak reason?", o:["The person is famous.","The person is not an expert on the topic they are talking about.","The person is too young.","The person uses facts and data."], a:"The person is not an expert on the topic they are talking about.", why:"Being famous doesn't make someone an expert on every topic."}
+];
+
+/* ---------- STATE (autosave) ---------- */
+const KEY = "fallacyDetectives_v1";
+if (new URLSearchParams(location.search).get("reset")==="1"){ try{localStorage.removeItem(KEY)}catch(e){} }
+let S = {name:"", tab:"start", learn:{}, det:{}, game:{i:0, ans:{}, streak:0, best:0}, fin:{}, celebrated:false};
+try{ const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S, JSON.parse(raw)); }catch(e){}
+function save(){ try{localStorage.setItem(KEY, JSON.stringify(S))}catch(e){} }
+
+/* ---------- SPEECH (Google US English only) ---------- */
+let voice=null;
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find(v=>v.name==="Google US English") || vs.find(v=>v.lang==="en-US" && /female|samantha/i.test(v.name)) || vs.find(v=>v.lang==="en-US") || null;
+}
+if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text){
+  if(!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  text = text.replace(/ELA\.[A-Z0-9.]+/g,"").replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,"").replace(/\s+/g," ").trim();
+  const u = new SpeechSynthesisUtterance(text);
+  if(voice) u.voice = voice;
+  u.lang="en-US"; u.rate=0.95;
+  speechSynthesis.speak(u);
+}
+document.addEventListener("click", e=>{
+  const b = e.target.closest("[data-say]"); if(!b) return;
+  const sel=b.getAttribute("data-say");
+  const el = sel.startsWith("#")||sel.startsWith(".") ? document.querySelector(sel) : null;
+  speak(el ? el.innerText : sel);
+});
+
+/* ---------- HELPERS ---------- */
+const $ = s=>document.querySelector(s);
+const esc = s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function shuffleSeed(arr, seed){ const a=arr.slice(); let x=seed*9301+49297; for(let i=a.length-1;i>0;i--){ x=(x*9301+49297)%233280; const j=Math.floor(x/233280*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function detOptions(i){ const a=DET[i].a; const others=shuffleSeed(NAMES.filter(n=>n!==a), i+3).slice(0,3); return shuffleSeed([a,...others], i+11); }
+
+/* question block builder: store = S[section], key */
+function qBlock(section, key, qText, opts, answer, why, extraHTML=""){
+  const chosen = S[section][key];
+  const id = section+"-"+key;
+  let h = `<div class="q" id="${id}">${extraHTML}<div class="qtext">${qText}</div>
+   <button class="say" data-say="#${id}">🔊 Read to Me</button><div class="opts">`;
+  opts.forEach(o=>{
+    let cls="opt";
+    if(chosen!==undefined){ if(o===chosen) cls+= (o===answer?" right":" wrong"); else if(o===answer) cls+=" show"; }
+    h+=`<button class="${cls}" data-sec="${section}" data-key="${key}" data-val="${esc(o).replace(/"/g,'&quot;')}" ${chosen!==undefined?"disabled":""}>${esc(o)}</button>`;
+  });
+  h+=`</div>`;
+  if(chosen!==undefined){
+    const ok = chosen===answer;
+    h+=`<div class="fb ${ok?"good":"bad"}">${ok?"✅ Correct!":"❌ Not quite. The answer is <b>"+esc(answer)+"</b>."} ${why}</div>`;
+  }
+  return h+`</div>`;
+}
+
+/* ---------- RENDER ---------- */
+function renderLearn(){
+  $("#learnGrid").innerHTML = F.map((f,i)=>`
+   <div class="fcard" style="border-color:${f.color}" id="fc-${i}">
+     <div class="fhead"><div class="femoji" style="background:${f.bg}">${f.emoji}</div>
+       <div><div class="fname" style="color:${f.color}">${f.name}</div><div class="fkid">${f.kid}</div></div></div>
+     <button class="say" data-say="#fcb-${i}">🔊 Read to Me</button>
+     <div id="fcb-${i}">
+       <div class="box" style="background:${f.bg}"><span class="lbl">What it is:</span> ${f.def}</div>
+       <div class="box" style="background:#f8fafc"><span class="lbl">🔎 Clue words:</span> <i>${f.clue}</i></div>
+       <div class="box" style="background:#fffbea"><span class="lbl">💬 Example:</span> ${f.ex}</div>
+       <div class="box" style="background:#f0fdf4"><span class="lbl">🧠 Why it's broken:</span> ${f.why}</div>
+     </div>
+     ${qBlock("learn", i, "⭐ Quick Check: "+f.check.q, f.check.o, f.check.a, "Remember: "+f.def)}
+   </div>`).join("");
+}
+function renderDet(){
+  $("#detList").innerHTML = DET.map((d,i)=>`<div class="card"><h3>Case #${i+1}</h3>
+    ${qBlock("det", i, "Which fallacy is this?", detOptions(i), d.a, d.why,
+      `<div class="scene ${d.t}"><div class="src">${d.src}</div>${esc(d.s)}</div>`)}</div>`).join("");
+  const n=Object.keys(S.det).length, c=Object.keys(S.det).filter(k=>S.det[k]===DET[k].a).length;
+  $("#detScore").textContent = `Score: ${c} / 10  •  Answered: ${n} / 10`;
+}
+function renderGame(){
+  const g=S.game, box=$("#gameBox");
+  const correct = Object.keys(g.ans).filter(k=>g.ans[k]===GAME[k].a).length;
+  if(g.i>=GAME.length){
+    box.innerHTML = `<div class="badge">⚡</div><h2>Round Complete!</h2>
+      <p class="gstate">You got <b>${correct} / ${GAME.length}</b> • Best streak: 🔥 ${g.best}</p>
+      <button class="next" data-go="final">On to the Final Check! ➜</button>`;
+    return;
+  }
+  const item=GAME[g.i], ans=g.ans[g.i];
+  let fb="";
+  if(ans!==undefined){ const ok=ans===item.a; fb=`<div class="fb ${ok?"good":"bad"}" style="font-size:19px">${ok?"✅ Yes! ":"❌ Oops! "} It's <b>${item.a.toUpperCase()}</b>. ${item.why}</div>
+      <button class="next" id="gNext">${g.i+1<GAME.length?"Next ➜":"Finish ➜"}</button>`; }
+  box.innerHTML = `<div class="gstate">Statement ${g.i+1} of ${GAME.length} &nbsp;•&nbsp; 🔥 Streak: ${g.streak} &nbsp;•&nbsp; ⭐ ${correct}</div>
+    <div class="gstmt" id="gst">${esc(item.s)}</div>
+    <button class="say" data-say="#gst">🔊 Read to Me</button>
+    <div class="gbtns" style="margin-top:10px">
+      <button class="gbtn s" data-g="strong" ${ans!==undefined?"disabled":""}>💪 STRONG</button>
+      <button class="gbtn f" data-g="sneaky" ${ans!==undefined?"disabled":""}>🐍 SNEAKY</button>
+    </div>${fb}`;
+}
+function renderFin(){
+  $("#finList").innerHTML = FIN.map((f,i)=>`<div class="card"><h3>Question ${i+1}</h3>${qBlock("fin", i, f.q, shuffleSeed(f.o, i+21), f.a, f.why)}</div>`).join("");
+  $("#finScore").textContent = `Answered: ${Object.keys(S.fin).length} / 8`;
+}
+function counts(){
+  const L=Object.keys(S.learn).filter(k=>S.learn[k]===F[k].check.a).length;
+  const D=Object.keys(S.det).filter(k=>S.det[k]===DET[k].a).length;
+  const G=Object.keys(S.game.ans).filter(k=>S.game.ans[k]===GAME[k].a).length;
+  const Fi=Object.keys(S.fin).filter(k=>S.fin[k]===FIN[k].a).length;
+  return {L,D,G,Fi,done:Object.keys(S.fin).length===FIN.length};
+}
+function renderResults(){
+  const c=counts(), box=$("#resBox");
+  if(!c.done){ box.innerHTML=`<div class="badge">🔒</div><h2>Almost there!</h2><p>Finish all 8 Final Check questions to unlock your results.</p><button class="next" data-go="final">Go to Final Check ➜</button>`; return; }
+  const total=c.L+c.D+c.G+c.Fi, max=F.length+DET.length+GAME.length+FIN.length;
+  const pct=Math.round(total/max*100);
+  const badge = pct>=90?"🏆 Master Detective": pct>=75?"🥇 Senior Detective": pct>=60?"🥈 Detective in Training":"🔎 Junior Detective";
+  const missed = FIN.map((f,i)=>S.fin[i]!==f.a?`Final #${i+1}`:null).filter(Boolean).concat(DET.map((d,i)=>S.det[i]!==d.a?`Case #${i+1}`:null).filter(Boolean));
+  box.innerHTML = `<div class="badge">🎉</div>
+    <h2>${esc(S.name||"Detective")}, you did it!</h2>
+    <div class="big">${total} / ${max}</div>
+    <p class="gstate">${pct}% • ${badge}</p>
+    <table class="rt">
+      <tr><td>📚 Learn Quick Checks</td><td><b>${c.L} / ${F.length}</b></td></tr>
+      <tr><td>🕵️ Fallacy Detective</td><td><b>${c.D} / ${DET.length}</b></td></tr>
+      <tr><td>⚡ Strong or Sneaky?</td><td><b>${c.G} / ${GAME.length}</b></td></tr>
+      <tr><td>📝 Final Check</td><td><b>${c.Fi} / ${FIN.length}</b></td></tr>
+      <tr><td>❌ Missed</td><td>${missed.length?missed.join(", "):"None! 🌟"}</td></tr>
+    </table>
+    <p style="margin-top:14px;font-weight:800">📸 Take a screenshot of this page and upload it to the Canvas module!</p>
+    <p style="font-size:14px;color:var(--muted)">Finished on this iPad • ${new Date().toLocaleDateString()}</p>`;
+  if(!S.celebrated){ S.celebrated=true; save(); }
+  confetti();
+}
+function renderNav(){
+  const c=counts();
+  const doneMap={start:!!S.name, learn:Object.keys(S.learn).length===F.length, detect:Object.keys(S.det).length===DET.length, game:S.game.i>=GAME.length, final:c.done, results:c.done};
+  document.querySelectorAll("#nav button").forEach(b=>{
+    const p=b.dataset.p; b.classList.toggle("on", p===S.tab);
+    b.querySelector(".ck")?.remove();
+    if(doneMap[p]) b.insertAdjacentHTML("beforeend",'<span class="ck">✅</span>');
+  });
+}
+function show(tab){
+  S.tab=tab; save();
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("on", p.id==="p-"+tab));
+  if(tab==="results") renderResults();
+  renderNav(); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- EVENTS ---------- */
+document.addEventListener("click", e=>{
+  const nb=e.target.closest("#nav button"); if(nb){ show(nb.dataset.p); return; }
+  const go=e.target.closest("[data-go]"); if(go){ show(go.dataset.go); return; }
+  const op=e.target.closest(".opt");
+  if(op && !op.disabled){
+    const sec=op.dataset.sec, key=op.dataset.key;
+    if(S[sec][key]!==undefined) return;
+    S[sec][key]=op.dataset.val.replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&amp;/g,"&");
+    save();
+    const ok = (sec==="learn"?F[key].check.a: sec==="det"?DET[key].a: FIN[key].a)===S[sec][key];
+    if(sec==="learn") renderLearn(); if(sec==="det") renderDet(); if(sec==="fin") renderFin();
+    if(ok) miniBurst(e.clientX,e.clientY);
+    renderNav(); return;
+  }
+  const gb=e.target.closest("[data-g]");
+  if(gb && !gb.disabled){
+    const g=S.game; if(g.ans[g.i]!==undefined) return;
+    g.ans[g.i]=gb.dataset.g;
+    if(g.ans[g.i]===GAME[g.i].a){ g.streak++; g.best=Math.max(g.best,g.streak); miniBurst(e.clientX,e.clientY);} else g.streak=0;
+    save(); renderGame(); return;
+  }
+  if(e.target.id==="gNext"){ S.game.i++; save(); renderGame(); renderNav(); return; }
+  if(e.target.id==="cheatBtn"){ $("#cheat").classList.add("on"); return; }
+  if(e.target.id==="cheatClose"||e.target.id==="cheat"){ $("#cheat").classList.remove("on"); return; }
+});
+$("#name").value=S.name;
+$("#name").addEventListener("input",e=>{ S.name=e.target.value; save(); renderNav(); });
+
+$("#cheatGrid").innerHTML = F.map(f=>`<div class="cg" style="border-color:${f.color};background:${f.bg}">
+  <div style="font-family:Fredoka;font-size:20px;color:${f.color}">${f.emoji} ${f.name}</div>
+  <div style="font-weight:800;font-size:15px">${f.kid}</div><div style="font-size:15px">${f.def}</div></div>`).join("");
+
+/* ---------- CONFETTI ---------- */
+const cv=$("#confetti"), cx=cv.getContext("2d"); let parts=[], anim=null;
+function sizeCv(){ cv.width=innerWidth; cv.height=innerHeight; } sizeCv(); addEventListener("resize",sizeCv);
+const COLS=["#f97316","#ef4444","#8b5cf6","#14b8a6","#3b82f6","#facc15","#22c55e","#ec4899"];
+function addParts(n,x,y,spread){ for(let i=0;i<n;i++) parts.push({x:x??Math.random()*cv.width,y:y??-20,vx:(Math.random()-.5)*spread,vy:y!=null?(Math.random()*-8-2):(Math.random()*3+2),r:Math.random()*6+4,c:COLS[i%COLS.length],a:Math.random()*6,va:(Math.random()-.5)*.3,life:0}); if(!anim) loop(); }
+function loop(){ cx.clearRect(0,0,cv.width,cv.height); parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.15;p.a+=p.va;p.life++; cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*.6);cx.restore();});
+  parts=parts.filter(p=>p.y<cv.height+30&&p.life<400); anim=parts.length?requestAnimationFrame(loop):null; if(!anim) cx.clearRect(0,0,cv.width,cv.height); }
+function miniBurst(x,y){ addParts(26,x,y,10); }
+function confetti(){ let k=0; const t=setInterval(()=>{ addParts(60,null,null,6); if(++k>5) clearInterval(t); },250); }
+
+/* ---------- INIT ---------- */
+renderLearn(); renderDet(); renderGame(); renderFin(); show(S.tab||"start");
+</script>
+</body>
+</html>
